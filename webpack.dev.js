@@ -1,6 +1,6 @@
-const webpack = require('webpack');
-const { merge } = require('webpack-merge');
-const common = require('./webpack.common');
+const webpack = require('webpack')
+const { merge } = require('webpack-merge')
+const common = require('./webpack.common')
 
 module.exports = merge(common, {
   // Set the mode to development or production
@@ -12,11 +12,11 @@ module.exports = merge(common, {
   devServer: {
     historyApiFallback: true,
     open: true,
-    compress: true
+    compress: true,
   },
 
   plugins: [
     // Only update what has changed on hot reload
     new webpack.HotModuleReplacementPlugin(),
   ],
-});
+})

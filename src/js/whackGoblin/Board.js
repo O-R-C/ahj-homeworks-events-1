@@ -1,4 +1,4 @@
-import styles from './Board.module.css'
+import * as styles from './Board.module.css'
 export default class Board {
   constructor(side = 4) {
     this.side = side
@@ -21,7 +21,6 @@ export default class Board {
     while (cnt) {
       const cell = this.createElement(styles.cell)
       this.board.append(cell)
-
       cnt--
     }
   }
@@ -33,6 +32,10 @@ export default class Board {
     return elem
   }
 
+  /**
+   *
+   * @returns элемент - игровое поле
+   */
   getBoard() {
     return this.board
   }

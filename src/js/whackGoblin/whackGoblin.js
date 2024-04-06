@@ -1,26 +1,165 @@
-import styles from './WhackGoblin.module.css'
+import * as styles from './WhackGoblin.module.css'
 
+/**
+ * Игра попади по гоблину
+ * @class
+ */
 export default class WhackGoblin {
+  /**
+   * @constructor
+   * @param {Element} board игровое поле
+   */
   constructor(board) {
     this.board = board
     this.body = document.body
     this.cells = this.board.children
     this.activeClass = styles.cellActive
 
-    this.activeCell = null
     this.timer = null
+    this.activeCell = null
+
+    this.points = null
+    this.miss = null
 
     this.init()
   }
 
   init() {
-    this.body.appendChild(this.board)
+    this.createContainers()
+    this.addListeners()
     this.showTitle()
-    this.move()
+    this.reset()
   }
 
+  /**
+   * Создает элементы для размещения игрового интерфейса
+   */
+  createContainers() {
+    this.container = this.createElement(styles.container)
+    const wrapper = this.createElement(styles.wrapper)
+    this.pointsElement = this.createElement(styles.points)
+    this.missesElement = this.createElement(styles.misses)
+
+    this.addElements(this.pointsElement, 5, styles.point)
+    this.addElements(this.missesElement, 3, styles.miss)
+
+    wrapper.append(this.pointsElement, this.board, this.missesElement)
+    this.container.append(wrapper)
+    this.body.appendChild(this.container)
+  }
+
+  /**
+   * Добавляет указанное количество ячеек переданному элементу\родителю
+   * @param {Element} elem родитель ячеек
+   * @param {number} amount количество добавляемых ячеек
+   * @param {string} className имя класса
+   */
+  addElements(elem, amount, className) {
+    let cnt = amount
+    while (cnt) {
+      elem.append(this.createElement(className))
+      cnt--
+    }
+  }
+
+  /**
+   * Создает элемент с указанным классом и типом
+   * @param {string} className имя класса
+   * @param {string} type тип элемента
+   * @returns созданный элемент
+   */
+  createElement(className, type = 'div') {
+    const elem = document.createElement(type)
+    elem.classList.add(className)
+
+    return elem
+  }
+
+  /**
+   * Сбрасывает игру к начальным значениям
+   */
+  reset() {
+    this.points = 0
+    this.miss = 0
+    this.stop()
+    this.move()
+    this.resetProgress()
+  }
+
+  addListeners() {
+    this.board.addEventListener('click', (evt) => {
+      const cell = evt.target
+      if (cell.classList.contains(this.activeClass)) {
+        this.points += 1
+        this.showProgress(this.pointsElement, styles.dead, this.points)
+      } else {
+        this.miss += 1
+        this.showProgress(this.missesElement, styles.dead, this.miss)
+      }
+      this.isWin()
+    })
+  }
+
+  /**
+   * Проверяем выигрыш\проигрыш
+   */
+  isWin() {
+    let title = null
+    if (this.points === 5) {
+      title = 'Победа !!!'
+    }
+    if (this.miss === 3) {
+      title = 'Поражение :('
+    }
+    if (title) {
+      const message = this.createElement(styles.message)
+      const result = this.createElement(styles.welcome)
+      result.textContent = title
+
+      message.append(result)
+      this.container.prepend(message)
+
+      setTimeout(() => {
+        message.remove()
+        this.reset()
+      }, 2000)
+    }
+  }
+
+  /**
+   * Показывает прогресс, уменьшая изображения ячеек
+   * @param {Element} elem родительский элемент ячеек очков
+   * @param {string} className имя класса
+   * @param {Element} points тип очков
+   */
+  showProgress(elem, className, points) {
+    const cells = [...elem.children].reverse()
+    let cnt = points
+    cells.forEach((cell) => {
+      if (cnt) {
+        cell.classList.add(className)
+        cnt--
+      }
+    })
+  }
+
+  /**
+   * Сбрасывает значение класса для ячеек очков\промахов
+   */
+  resetProgress() {
+    ;[...this.pointsElement.children].forEach((item) =>
+      item.classList.remove(styles.dead)
+    )
+    ;[...this.missesElement.children].forEach((item) =>
+      item.classList.remove(styles.dead)
+    )
+  }
+
+  /**
+   * Логика движения гоблина
+   */
   move() {
-    if (this.timer) clearTimeout(this.timer)
+    this.stop()
 
     let index
     do {
@@ -37,6 +176,16 @@ export default class WhackGoblin {
     this.timer = setTimeout(this.move.bind(this), 1000)
   }
 
+  /**
+   * Останавливает перемещение гоблина
+   */
+  stop() {
+    if (this.timer) clearTimeout(this.timer)
+  }
+
+  /**
+   * Показывает заголовки на странице
+   */
   showTitle() {
     document.querySelector('title').textContent = 'Whack Goblin Game'
     document.querySelector('.welcome').textContent = 'Whack Goblin Game'
