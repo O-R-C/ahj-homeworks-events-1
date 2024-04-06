@@ -1,0 +1,7 @@
+.cellActive {
+  background-image: url('https://github.com/netology-code/ahj-homeworks/raw/AHJ-50/dom/pic/goblin.png');
+
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
