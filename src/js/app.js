@@ -1,5 +1,5 @@
 import Board from './whackGoblin/Board'
-import WhackGoblin from './WhackGoblin/whackGoblin'
+import WhackGoblin from './whackGoblin/whackGoblin'
 
 const board = new Board()
 const whackGoblin = new WhackGoblin(board.getBoard())
