@@ -40,7 +40,6 @@ export default class WhackGoblin {
     this.pointsElement = this.createElement(styles.points)
     this.missesElement = this.createElement(styles.misses)
 
-    this.addElements(this.pointsElement, 5, styles.point)
     this.addElements(this.missesElement, 5, styles.miss)
 
     wrapper.append(this.pointsElement, this.board, this.missesElement)
@@ -81,7 +80,6 @@ export default class WhackGoblin {
   reset() {
     this.points = 0
     this.miss = 0
-    this.stop()
     this.move()
     this.resetProgress()
   }
@@ -92,8 +90,9 @@ export default class WhackGoblin {
       if (cell.classList.contains(this.activeClass)) {
         this.move()
         this.points += 1
-        this.showProgress(this.pointsElement, styles.dead, this.points)
+        this.showPoint()
       } else {
+        this.move()
         this.miss += 1
         this.showProgress(this.missesElement, styles.dead, this.miss)
       }
@@ -102,11 +101,18 @@ export default class WhackGoblin {
   }
 
   /**
+   * Показывает количество набранных очков
+   */
+  showPoint() {
+    this.pointsElement.textContent = this.points
+  }
+
+  /**
    * Проверяем выигрыш\проигрыш
    */
   isWin() {
     let title = null
-    if (this.points === 5) {
+    if (this.points === 1000) {
       title = 'Победа !!!'
     }
     if (this.miss === 5) {
@@ -148,9 +154,7 @@ export default class WhackGoblin {
    * Сбрасывает значение класса для ячеек очков\промахов
    */
   resetProgress() {
-    ;[...this.pointsElement.children].forEach((item) =>
-      item.classList.remove(styles.dead)
-    )
+    this.showPoint()
     ;[...this.missesElement.children].forEach((item) =>
       item.classList.remove(styles.dead)
     )
