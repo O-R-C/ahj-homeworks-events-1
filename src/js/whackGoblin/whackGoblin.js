@@ -41,7 +41,7 @@ export default class WhackGoblin {
     this.missesElement = this.createElement(styles.misses)
 
     this.addElements(this.pointsElement, 5, styles.point)
-    this.addElements(this.missesElement, 3, styles.miss)
+    this.addElements(this.missesElement, 5, styles.miss)
 
     wrapper.append(this.pointsElement, this.board, this.missesElement)
     this.container.append(wrapper)
@@ -90,6 +90,7 @@ export default class WhackGoblin {
     this.board.addEventListener('click', (evt) => {
       const cell = evt.target
       if (cell.classList.contains(this.activeClass)) {
+        this.move()
         this.points += 1
         this.showProgress(this.pointsElement, styles.dead, this.points)
       } else {
@@ -108,7 +109,7 @@ export default class WhackGoblin {
     if (this.points === 5) {
       title = 'Победа !!!'
     }
-    if (this.miss === 3) {
+    if (this.miss === 5) {
       title = 'Поражение :('
     }
     if (title) {
@@ -173,7 +174,12 @@ export default class WhackGoblin {
     this.activeCell = index
     this.cells[index].classList.add(this.activeClass)
 
-    this.timer = setTimeout(this.move.bind(this), 1000)
+    this.timer = setTimeout(() => {
+      this.miss++
+      this.isWin()
+      this.showProgress(this.missesElement, styles.dead, this.miss)
+      this.move()
+    }, 1000)
   }
 
   /**
